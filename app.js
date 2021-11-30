@@ -7,12 +7,27 @@ app.use(express.json());
 let data = require('./MOCK_DATA.json');
 
 
+const dataa = {
+    api_requested_by :"Your name",
+    books : data
+}
+
+const logger = (name) =>{
+
+    return (req,res,next) =>{
+
+        dataa.api_requested_by = name
+        next();
+    }
+}
+
+
 // ========================================================================
 // responding with Book data when GET request is made to homepage
 // ========================================================================
 
-app.get("/", (req, res) =>{
-    res.send({"api_requested_by": "Kalpit Sharma",data});
+app.get("/", logger("Kalpit Sharma"), (req, res) =>{
+    res.send(dataa);
 });
 
 
@@ -20,13 +35,15 @@ app.get("/", (req, res) =>{
 // posting data
 // ========================================================================
 
-app.post("/books", (req, res) =>{
+app.post("/books", logger("Kalpit Sharma"), (req, res) =>{
 
     const newData = [...data, req.body];
 
+    dataa.books = newData;
+
     // console.log(newData);
 
-    res.send({"api_requested_by": "Kalpit Sharma",newData});
+    res.send(dataa);
 });
 
 
@@ -34,13 +51,15 @@ app.post("/books", (req, res) =>{
 // filtering data from ID
 // ========================================================================
 
-app.get("/books/:id", (req, res) =>{
+app.get("/books/:id", logger("Kalpit Sharma"), (req, res) =>{
 
     const newData = data.filter((book) => book.id === Number(req.params.id));
 
+    dataa.books = newData;
+
     // console.log(req.params.id, newData);
 
-    res.send({"api_requested_by": "Kalpit Sharma",newData});
+    res.send(dataa);
 });
 
 
@@ -48,7 +67,7 @@ app.get("/books/:id", (req, res) =>{
 // patching data from ID
 // ========================================================================
 
-app.patch("/books/:id", (req, res) =>{
+app.patch("/books/:id", logger("Kalpit Sharma"), (req, res) =>{
 
     
     const newData = data.map(book =>{
@@ -66,7 +85,9 @@ app.patch("/books/:id", (req, res) =>{
         return book;
     });
 
-    res.send({"api_requested_by": "Kalpit Sharma",newData});
+    dataa.books = newData;
+
+    res.send(dataa);
 });
 
 
@@ -74,11 +95,13 @@ app.patch("/books/:id", (req, res) =>{
 // deleting data which match ID
 // ========================================================================
 
-app.delete("/books/:id", (req, res) =>{
+app.delete("/books/:id", logger("Kalpit Sharma"), (req, res) =>{
 
     const newData = data.filter((book) => book.id != req.params.id);
 
-    res.send({"api_requested_by": "Kalpit Sharma",newData});
+    dataa.books = newData;
+
+    res.send(dataa);
 });
 
 // =================================================
